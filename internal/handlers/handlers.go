@@ -1,9 +1,9 @@
 package handlers
 
 import (
+	"io"
 	"net/http"
 	"os"
-	"io"
 	"path/filepath"
 	"strings"
 	"time"
@@ -21,7 +21,7 @@ func UploadHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Error parsing form data", http.StatusInternalServerError)
 		return
 	}
-	file, header, err := r.FormFile("file")
+	file, header, err := r.FormFile("myFile")
 	if err != nil {
 		http.Error(w, "Error retrieving the file", http.StatusInternalServerError)
 		return

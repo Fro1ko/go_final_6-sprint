@@ -14,23 +14,29 @@ type Server struct {
 }
 
 func New(logger *log.Logger) *Server {
-	// 1. Создаем роутер
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("/", handlers.IndexHandler)
-	mux.HandleFunc("/upload", handlers.UploadHandler)
-
-	httpSrv := &http.Server{
-		Addr:         ":8080",           
-		Handler:      mux,               
-		ErrorLog:     logger,           
-		ReadTimeout:  5 * time.Second,   
-		WriteTimeout: 10 * time.Second,  
-		IdleTimeout:  15 * time.Second,  
-	}
-
-	return &Server{
+	srv := &Server{
 		Logger: logger,
-		Server: httpSrv,
-	}
+		Server: &http.Server{
+			Addr:         ":8080",           
+			Handler:      mux,               
+			ErrorLog:     logger,           
+			ReadTimeout:  5 * time.Second,   
+			WriteTimeout: 10 * time.Second,  
+			IdleTimeout:  15 * time.Second,  
+	},
+}
+	mux.HandleFunc("/", srv.IndexHandler)
+	mux.HandleFunc("/upload", srv.UploadHandler)
+
+	return srv
+}
+
+func (s *Server) IndexHandler(w http.ResponseWriter, r *http.Request) {
+	handlers.IndexHandler(w, r)
+}
+
+func (s *Server) UploadHandler(w http.ResponseWriter, r *http.Request) {
+	handlers.UploadHandler(w, r)
 }
